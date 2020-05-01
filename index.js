@@ -24,7 +24,7 @@ mongoose.connect(process.env.MONGO_URI,{useNewUrlParser: true, useUnifiedTopolog
 const PORT = process.env.PORT || 5000;
 let host = `http://localhost:${PORT}`;
 if(process.env.NODE_ENV === "production"){
-    host = `http://${process.env.URL}:${process.env.PORT}`;
+    host = `http://${process.env.URL}`;
 }
 const options = {
     swaggerDefinition: {
@@ -33,7 +33,7 @@ const options = {
             title: "Homie Chat",
             version: "1.0.0",
             description:
-                "Homie Chat API documents",
+                "Homie Chat API documentations",
             license: {
                 name: "MIT",
                 url: "https://choosealicense.com/licenses/mit/"
