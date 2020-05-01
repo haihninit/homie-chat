@@ -24,9 +24,12 @@ exports.createUser = async function(req, res) {
     if(_.isEmpty(confirmPassword)) throw {status: 400, message: "Vui lòng nhập lại mật khẩu!"}
     if(!(_.isEqual(password, confirmPassword))) throw {status: 400, message: "Mật khẩu không khớp!"}
     let user = new UserModel(req.body);
+    let token = await user.generateAuthToken();
     user.save((err) => {
         if(!err){
-            res.status(201).json(user)
+            res.status(201).json({success: true, data: {user, token}})
+        } else {
+            console.log(err)
         }
     })
 };
@@ -45,5 +48,5 @@ exports.authenticate = async function (req, res, next) {
     if(_.isEmpty(req.body.username)) return next({status: 400, message: "Vui lòng nhập username/email!"});
     if(_.isEmpty(req.body.password)) return next({status: 400, message: "Vui lòng nhập mật khẩu!"});
     let auth = await UserModel.findByCredentials(req.body.username, req.body.password);
-    res.status(200).json(auth);
+    res.status(200).json({success: true, data: auth, message: "Login successful!"});
 };

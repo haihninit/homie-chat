@@ -5,7 +5,6 @@ const jwt = require('express-jwt');
 const mongoose = require('mongoose');
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger.json');
 const routes = require('./routes/index');
 const app = express();
 

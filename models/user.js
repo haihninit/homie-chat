@@ -7,8 +7,6 @@ const UserSchema = new mongoose.Schema({
         type: String,
         lowercase: true,
         trim: true,
-        index: true,
-        unique: true,
         default: null
     },
     fullName: {
@@ -19,8 +17,6 @@ const UserSchema = new mongoose.Schema({
         type: String,
         lowercase: true,
         trim: true,
-        index: true,
-        unique: true,
         default: null
     },
     password: {
@@ -57,7 +53,7 @@ const UserSchema = new mongoose.Schema({
             }
         }
     ]
-});
+},  {timestamps: true});
 
 UserSchema.pre('save', function(next){
     if(!this.isModified("password")) {
