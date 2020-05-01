@@ -3,6 +3,9 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const jwt = require('express-jwt');
 const mongoose = require('mongoose');
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
 const routes = require('./routes/index');
 const app = express();
 
@@ -19,7 +22,40 @@ mongoose.connect(process.env.MONGO_URI,{useNewUrlParser: true, useUnifiedTopolog
         app.emit('mongoose_connected');
     })
     .catch(err => console.log(err));
-
+const options = {
+    swaggerDefinition: {
+        openapi: "3.0.0",
+        info: {
+            title: "Homie Chat",
+            version: "1.0.0",
+            description:
+                "Homie Chat API documents",
+            license: {
+                name: "MIT",
+                url: "https://choosealicense.com/licenses/mit/"
+            },
+            contact: {
+                name: "Hai Huynh Ngoc",
+                url: "https://facebook.com/haihn24",
+                email: "haihuynhngoc24@gmail.com"
+            }
+        },
+        servers: [
+            {
+                url: "http://localhost:5000"
+            }
+        ]
+    },
+    apis: ['./routes/index.js']
+};
+const specs = swaggerJsdoc(options);
+app.use("/docs", swaggerUi.serve);
+app.get(
+    "/docs",
+    swaggerUi.setup(specs, {
+        explorer: true
+    })
+);
 app.use(
     jwt({ secret: process.env.JWT_SECRET}).unless({
         path: [
