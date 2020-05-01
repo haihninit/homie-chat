@@ -21,6 +21,11 @@ mongoose.connect(process.env.MONGO_URI,{useNewUrlParser: true, useUnifiedTopolog
         app.emit('mongoose_connected');
     })
     .catch(err => console.log(err));
+const PORT = process.env.PORT || 5000;
+let host = `http://localhost:${PORT}`;
+if(process.env.NODE_ENV === "production"){
+    host = `http://${process.env.IP}:${process.env.PORT}`;
+}
 const options = {
     swaggerDefinition: {
         openapi: "3.0.0",
@@ -41,11 +46,24 @@ const options = {
         },
         servers: [
             {
-                url: "http://localhost:5000"
+                url: host
             }
-        ]
+        ],
+        host, // Host (optional)
+        basePath: '/', // Base path (optional)
+        components: {
+            securitySchemes:
+                {
+                    bearerAuth: {
+                        type: "http",
+                        scheme: "bearer",
+                        bearerFormat: "JWT",
+                        in: "header"
+                    }
+                }
+        }
     },
-    apis: ['./routes/index.js']
+    apis: ['./routes/*.js']
 };
 const specs = swaggerJsdoc(options);
 app.use("/docs", swaggerUi.serve);
@@ -71,7 +89,7 @@ app.use(require('./middlewares/authMiddleware'));
 
 routes(app);
 app.use(require('./middlewares/errorHandleMiddleware'));
-const PORT = process.env.PORT || 5000;
+
 app.on('mongoose_connected', () => {
     app.listen(PORT, () => {
         console.log("Server is running...")

@@ -12,17 +12,17 @@ exports.getUserDetail = function(req, res) {
 };
 
 // Handle Author create on POST.
-exports.createUser = async function(req, res) {
+exports.createUser = async function(req, res, next) {
     const {fullName, username, password, confirmPassword, email} = req.body;
-    if(_.isEmpty(fullName)) throw {status: 400, message: "Vui lòng nhập tên của bạn!"}
-    if(_.isEmpty(username) && _.isEmpty(email)) throw {status: 400, message: "Vui lòng nhập tên người dùng hoặc email!"}
+    if(_.isEmpty(fullName)) return next({status: 400, message: "Vui lòng nhập tên của bạn!"})
+    if(_.isEmpty(username) && _.isEmpty(email)) return next({status: 400, message: "Vui lòng nhập tên người dùng hoặc email!"})
     let isUsernameExist = username && await UserModel.exists({username: username});
     let isEmailExist = email && await UserModel.exists({email: email});
     if(isUsernameExist || isEmailExist) return res.status(400).json({success: false, message: "Tên người dùng/email đã tồn tại!"})
-    if(_.isEmpty(password)) throw {status: 400, message: "Vui lòng nhập mật khẩu!"}
-    if(password.length < 6) throw {status: 400, message: "Mật khẩu phải lớn hơn hoặc bằng 6 ký tự!"}
-    if(_.isEmpty(confirmPassword)) throw {status: 400, message: "Vui lòng nhập lại mật khẩu!"}
-    if(!(_.isEqual(password, confirmPassword))) throw {status: 400, message: "Mật khẩu không khớp!"}
+    if(_.isEmpty(password)) return next({status: 400, message: "Vui lòng nhập mật khẩu!"})
+    if(password.length < 6) return next({status: 400, message: "Mật khẩu phải lớn hơn hoặc bằng 6 ký tự!"})
+    if(_.isEmpty(confirmPassword)) return next({status: 400, message: "Vui lòng nhập lại mật khẩu!"})
+    if(!(_.isEqual(password, confirmPassword))) return next({status: 400, message: "Mật khẩu không khớp!"})
     let user = new UserModel(req.body);
     let token = await user.generateAuthToken();
     user.save((err) => {
@@ -48,5 +48,9 @@ exports.authenticate = async function (req, res, next) {
     if(_.isEmpty(req.body.username)) return next({status: 400, message: "Vui lòng nhập username/email!"});
     if(_.isEmpty(req.body.password)) return next({status: 400, message: "Vui lòng nhập mật khẩu!"});
     let auth = await UserModel.findByCredentials(req.body.username, req.body.password);
+    if(!auth){
+        return next({status: 400, message: "Tài khoản hoặc mật khẩu không chính xác!"})
+    }
     res.status(200).json({success: true, data: auth, message: "Login successful!"});
+
 };

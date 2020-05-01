@@ -4,25 +4,23 @@ const UserController = require('../controllers/user');
 /**
  * @swagger
  *
- * /login:
- *   post:
- *     description: Login to the application
+ * /users:
+ *   get:
+ *     tags:
+ *      - Users
+ *     security:
+ *      - bearerAuth: []
+ *     summary: Get user list
+ *     description: Get user list
  *     produces:
  *       - application/json
- *     parameters:
- *       - name: username
- *         description: Username to use for login.
- *         in: formData
- *         required: true
- *         type: string
- *       - name: password
- *         description: User's password.
- *         in: formData
- *         required: true
- *         type: string
  *     responses:
  *       200:
- *         description: login
+ *         description: Data found
+ *       404:
+ *         description: Data not found
+ *       401:
+ *         description: Unauthorized
  */
 router.get('/', UserController.getUserList);
 router.delete('/', UserController.deleteUser);
