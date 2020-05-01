@@ -24,7 +24,7 @@ mongoose.connect(process.env.MONGO_URI,{useNewUrlParser: true, useUnifiedTopolog
 const PORT = process.env.PORT || 5000;
 let host = `http://localhost:${PORT}`;
 if(process.env.NODE_ENV === "production"){
-    host = `http://${process.env.IP}:${process.env.PORT}`;
+    host = `http://${process.env.URL}:${process.env.PORT}`;
 }
 const options = {
     swaggerDefinition: {
