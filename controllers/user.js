@@ -16,6 +16,7 @@ exports.createUser = async function(req, res, next) {
     const {fullName, username, password, confirmPassword, email} = req.body;
     if(_.isEmpty(fullName)) return next({status: 400, message: "Vui lòng nhập tên của bạn!"})
     if(_.isEmpty(username) && _.isEmpty(email)) return next({status: 400, message: "Vui lòng nhập tên người dùng hoặc email!"})
+    if(!(req.body.username.match(/^[a-zA-Z0-9]+$/))) return next({status: 400, message: "Tên người dùng chỉ bao gồm chữ và số!"});
     let isUsernameExist = username && await UserModel.exists({username: username});
     let isEmailExist = email && await UserModel.exists({email: email});
     if(isUsernameExist || isEmailExist) return res.status(400).json({success: false, message: "Tên người dùng/email đã tồn tại!"})
