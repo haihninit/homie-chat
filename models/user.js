@@ -82,13 +82,15 @@ UserSchema.statics.findByCredentials = async function(username, password) {
             {username: username},
             {email: username}
         ]}).select('password tokens');
-    const isPasswordMatch = await user.comparePassword(password);
-    if(isPasswordMatch){
-        let token = await user.generateAuthToken();
-        return {user: await this.findOne({$or: [
-                    {username: username},
-                    {email: username}
-                ]}), token}
+    if(user){
+        const isPasswordMatch = await user.comparePassword(password);
+        if(isPasswordMatch){
+            let token = await user.generateAuthToken();
+            return {user: await this.findOne({$or: [
+                        {username: username},
+                        {email: username}
+                    ]}), token}
+        }
     }
     return null;
 };
