@@ -3,7 +3,8 @@ const _ = require('lodash');
 
 // Display list of all Authors.
 exports.getUserList = async function(req, res) {
-    res.status(200).json({success: true, data: await UserModel.find()});
+    const {limit, offset} = req.query;
+    res.status(200).json({success: true, data: await UserModel.find().skip(parseInt(offset)).limit(parseInt(limit))});
 };
 
 // Display detail page for a specific Author.
@@ -46,12 +47,16 @@ exports.updateUser = function(req, res) {
 };
 
 exports.authenticate = async function (req, res, next) {
-    if(_.isEmpty(req.body.username)) return next({status: 400, message: "Vui lòng nhập username/email!"});
+    if(_.isEmpty(req.body.username)) return next({status: 400, message: "Vui lòng nhập tên người dùng!"});
     if(_.isEmpty(req.body.password)) return next({status: 400, message: "Vui lòng nhập mật khẩu!"});
     let auth = await UserModel.findByCredentials(req.body.username, req.body.password);
     if(!auth){
         return next({status: 400, message: "Tài khoản hoặc mật khẩu không chính xác!"})
     }
     res.status(200).json({success: true, data: auth, message: "Login successful!"});
-
 };
+
+exports.authByToken = async function (req, res, next) {
+    res.status(200).json({success: true, data: req.user});
+};
+
