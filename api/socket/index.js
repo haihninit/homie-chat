@@ -80,6 +80,8 @@ let bootstrap = (io) => {
         async function sendMessage(room, sender, content, type) {
             let message = new MessageModel({type, content, sender, room});
             let chatRoom = await RoomModel.findById(room);
+            console.log(message);
+            console.log(room);
             socket.broadcast.emit('invite to room', chatRoom);
             message.save(err => {
                 if(!err){
