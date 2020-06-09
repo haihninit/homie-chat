@@ -80,4 +80,6 @@ router.post('/signup', UserController.createUser);
  */
 router.post('/login', UserController.authenticate);
 
+router.post('/logout', UserController.logout);
+
 module.exports = router;

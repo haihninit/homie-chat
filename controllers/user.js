@@ -56,6 +56,18 @@ exports.authenticate = async function (req, res, next) {
     res.status(200).json({success: true, data: auth, message: "Login successful!"});
 };
 
+exports.logout = async function(req, res, next){
+    try {
+        req.user.tokens = req.user.tokens.filter((token) => {
+            return token.token !== req.token
+        });
+        await req.user.save();
+        res.status(200).json({success: true})
+    } catch (error) {
+        next(error)
+    }
+};
+
 exports.authByToken = async function (req, res, next) {
     res.status(200).json({success: true, data: req.user});
 };

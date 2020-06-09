@@ -48,8 +48,7 @@ const UserSchema = new mongoose.Schema({
     tokens: [
         {
             token: {
-                type: String,
-                select: false
+                type: String
             }
         }
     ]
