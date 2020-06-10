@@ -16,6 +16,7 @@ let bootstrap = (io) => {
         socket.broadcast.emit('user connected', socket.username);
 
         socket.on('user join', (user) => {
+            sendWelcomeMessage(user._id);
             if(!onlineList.some(item => item._id === user._id)){
                 onlineList.push({...user, ...{socketId: socket.id}});
             }
@@ -58,6 +59,7 @@ let bootstrap = (io) => {
         });
 
         socket.on('join room', roomId => {
+            console.log(roomId);
             joinRoom(roomId);
         });
 
@@ -90,6 +92,33 @@ let bootstrap = (io) => {
                     io.to(socket.id).emit('send message failed', room);
                 }
             });
+        }
+
+        async function sendWelcomeMessage(userId) {
+            let chatRoom = await RoomModel.find({members: ["5ee09200ed620d0017e80e75", userId]});
+            if(!chatRoom.length){
+                let room = new RoomModel({owner: "5ee09200ed620d0017e80e75", members: ["5ee09200ed620d0017e80e75", userId], name: "Homie Bot"});
+                room.save(err => {
+                    if(!err){
+                        let message = new MessageModel({
+                            type: "TEXT",
+                            content: "Chào mừng bạn đến với Homie Chat!",
+                            sender: "5ee09200ed620d0017e80e75",
+                            room: room._id});
+                        message.save(err => {
+                            if(!err){
+                                socket.to(room).emit('received message', message)
+                            } else {
+                                io.to(socket.id).emit('send message failed', room);
+                            }
+                        });
+                        socket.emit('created room', room);
+                        socket.broadcast.emit('invite to room', room);
+                    } else {
+                        console.log(err)
+                    }
+                })
+            }
         }
 
     });
