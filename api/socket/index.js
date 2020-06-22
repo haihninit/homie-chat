@@ -40,6 +40,7 @@ let bootstrap = (io) => {
 
         // chat all
         socket.on('chat all', (message) => {
+            console.log('chat all', message)
             io.emit('chat all', message);
         });
 
