@@ -23,6 +23,10 @@ const UserSchema = new mongoose.Schema({
         type: String,
         select: false, // No select
     },
+    role: {
+        type: String,
+        default: 0
+    },
     address: {
         type: String,
         default: null

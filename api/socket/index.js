@@ -38,6 +38,11 @@ let bootstrap = (io) => {
             sendMessage(room, sender, content, type);
         });
 
+        // chat all
+        socket.on('chat all', (message) => {
+            io.emit('chat all', message);
+        });
+
         // user typing event
         socket.on('user typing', (isTyping) => {
             if (isTyping === true) {
